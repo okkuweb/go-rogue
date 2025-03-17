@@ -1,39 +1,47 @@
 package main
 
 import (
+	"fmt"
+
 	"codeberg.org/anaseto/gruid"
 )
 
 type model struct {
 	gd gruid.Grid // user interface grid
 	g *game
-	state string
-	// other fields with the state of the application
-}
-func (md *model) setState (state string) {
-	md.state = state
-}
-func (md *model) getState (state string) {
-	md.state = state
+	opt *Options
+	State string
 }
 
+func (md *model) setState (state string) error {
+	if md.opt.States[state] {
+		md.State = state
+		return nil
+	}
+	return fmt.Errorf("No such state: %s", state)
+}
 
 func (md *model) Update(msg gruid.Msg) gruid.Effect {
+	var effect gruid.Effect
     switch msg.(type) {
     case gruid.MsgInit:
         // Initialize your grid here if needed
-		Print("hey")
-		md.setState("menu")
-        return nil
+		if _, ok := msg.(gruid.MsgInit); ok {
+			md.Print("Init game")
+			err := md.setState("menu")
+			if err != nil {
+				md.Print(err)
+				return gruid.End()
+			}
+			return nil
+		}
     case gruid.MsgKeyDown:
-		Print("bye")
-        return gruid.End()
+	 	effect = md.KeyDown(msg)
     default:
     }
-    return nil
+	return effect
 }
 func (md *model) Draw() gruid.Grid {
-	Print("bye")
 	max := md.gd.Size()
 	for x := range max.X {
 		// Top and bottom borders

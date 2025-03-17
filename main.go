@@ -12,13 +12,6 @@ import (
 type game struct {
 }
 
-const (
-	UIWidth  = 80
-	UIHeight = 24
-	LogFile = "./log.txt"
-)
-
-
 type styler struct{}
 func (sty styler) GetStyle(cst gruid.Style) tc.Style {
 	st := tc.StyleDefault
@@ -26,8 +19,9 @@ func (sty styler) GetStyle(cst gruid.Style) tc.Style {
 }
 
 func main() {
-	gd := gruid.NewGrid(UIWidth, UIHeight)
-	m := &model{gd: gd, g: &game{}}
+	opt := InitOptions()
+	gd := gruid.NewGrid(opt.UIWidth, opt.UIHeight)
+	md := &model{gd: gd, g: &game{}, opt: opt}
 
 	st := styler{}
 	dr := tcell.NewDriver(tcell.Config{StyleManager: st})
@@ -35,7 +29,7 @@ func main() {
 	
 	app := gruid.NewApp(gruid.AppConfig{
 		Driver: dr,
-		Model: m,
+		Model: md,
 	})
 
 	if err := app.Start(context.Background()); err != nil {
