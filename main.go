@@ -16,7 +16,8 @@ func (sty styler) GetStyle(cst gruid.Style) tc.Style {
 }
 
 func main() {
-	gd := gruid.NewGrid(80, 24)
+	opt := &options{width: 80, height: 24}
+	gd := gruid.NewGrid(opt.width, opt.height)
 	md := &model{grid: gd}
 	st := styler{}
 	dr := tcell.NewDriver(tcell.Config{StyleManager: st})

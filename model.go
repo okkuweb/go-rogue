@@ -10,14 +10,21 @@ type model struct {
 
 type game struct {
 	PlayerPos gruid.Point // tracks player position
+	ECS *ECS // entities present on the map
+	Map *Map // the game map, made of tiles
 }
 
 func (m *model) Update(msg gruid.Msg) gruid.Effect {
 	m.action = action{} // reset last action information
 	switch msg := msg.(type) {
 	case gruid.MsgInit:
-		// Initialization: set player position in the center.
-		m.game.PlayerPos = m.grid.Size().Div(2)
+		// Initialize map
+		size := m.grid.Size() // map size: for now the whole window
+		m.game.Map = NewMap(size)
+		// Initialize entities
+		m.game.ECS = NewECS()
+		// Initialization: create a player entity centered on the map.
+		m.game.ECS.PlayerID = m.game.ECS.AddEntity(&Player{}, size.Div(2))
 	case gruid.MsgKeyDown:
 		// Update action information on key down.
 		m.updateMsgKeyDown(msg)
@@ -54,14 +61,18 @@ func (m *model) updateMsgKeyDown(msg gruid.MsgKeyDown) {
 }
 
 func (m *model) Draw() gruid.Grid {
-	it := m.grid.Iterator()
+	m.grid.Fill(gruid.Cell{Rune: ' '})
+	// We draw the map tiles.
+	it := m.game.Map.Grid.Iterator()
 	for it.Next() {
-		switch {
-		case it.P() == m.game.PlayerPos:
-			it.SetCell(gruid.Cell{Rune: '@'})
-		default:
-			it.SetCell(gruid.Cell{Rune: ' '})
-		}
+		m.grid.Set(it.P(), gruid.Cell{Rune: m.game.Map.Rune(it.Cell())})
+	}
+	// We draw the entities.
+	for i, e := range m.game.ECS.Entities {
+		m.grid.Set(m.game.ECS.Positions[i], gruid.Cell{
+			Rune:  e.Rune(),
+			Style: gruid.Style{Fg: e.Color()},
+		})
 	}
 	return m.grid
 }
