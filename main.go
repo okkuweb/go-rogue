@@ -10,12 +10,15 @@ import (
 )
 
 type styler struct{}
+
 func (sty styler) GetStyle(cst gruid.Style) tc.Style {
 	st := tc.StyleDefault
 	return st
 }
 
 func main() {
+	InitLogger()
+	defer logFile.Close()
 	opt := &options{width: 80, height: 24}
 	gd := gruid.NewGrid(opt.width, opt.height)
 	md := &model{grid: gd}
@@ -24,7 +27,7 @@ func main() {
 
 	app := gruid.NewApp(gruid.AppConfig{
 		Driver: dr,
-		Model: md,
+		Model:  md,
 	})
 
 	if err := app.Start(context.Background()); err != nil {
