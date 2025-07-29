@@ -23,6 +23,8 @@ func (m *model) Update(msg gruid.Msg) gruid.Effect {
 		m.game.Map = NewMap(size)
 		// Initialize entities
 		m.game.ECS = NewECS()
+		m.game.ECS.PlayerID = m.game.ECS.AddEntity(&Player{}, size.Div(2))
+		m.game.ECS.PlayerID = m.game.ECS.AddEntity(&Player{}, m.game.Map.RandomFloor())
 		// Initialization: create a player entity centered on the map.
 		m.game.ECS.PlayerID = m.game.ECS.AddEntity(&Player{}, size.Div(2))
 	case gruid.MsgKeyDown:
