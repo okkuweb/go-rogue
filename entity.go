@@ -1,6 +1,9 @@
 package main
 
-import "codeberg.org/anaseto/gruid"
+import (
+	"codeberg.org/anaseto/gruid"
+	"codeberg.org/anaseto/gruid/rl"
+)
 
 type ECS struct {
 	Entities  []Entity            // list of entities
@@ -38,7 +41,17 @@ type Entity interface {
 	Color() gruid.Color // the character's color
 }
 
-type Player struct{}
+type Player struct {
+	FOV *rl.FOV // player's field of view
+}
+
+const maxLOS = 10
+
+func NewPlayer() *Player {
+	player := &Player{}
+	player.FOV = rl.NewFOV(gruid.NewRange(-maxLOS, -maxLOS, maxLOS+1, maxLOS+1))
+	return player
+}
 
 func (p *Player) Rune() rune {
 	return '@'
@@ -47,4 +60,3 @@ func (p *Player) Rune() rune {
 func (p *Player) Color() gruid.Color {
 	return gruid.ColorDefault
 }
-
