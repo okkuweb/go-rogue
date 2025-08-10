@@ -2,7 +2,6 @@ package main
 
 import (
 	"math/rand/v2"
-	"time"
 
 	"codeberg.org/anaseto/gruid"
 	"codeberg.org/anaseto/gruid/paths"
@@ -17,23 +16,25 @@ const (
 
 // Map represents the rectangular map of the game's level.
 type Map struct {
-	Grid rl.Grid
-	Rand *rand.Rand // random number generator
+	Grid     rl.Grid
+	Rand     *rand.Rand // random number generator
+	Explored map[gruid.Point]bool
 }
 
 // NewMap returns a new map with given size.
 func NewMap(size gruid.Point) *Map {
-	m := &Map{}
-	m.Grid = rl.NewGrid(size.X, size.Y)
+	m := &Map{
+		Grid:     rl.NewGrid(size.X, size.Y),
+		Rand:     rand.New(rand.NewPCG(rand.Uint64(), rand.Uint64())),
+		Explored: make(map[gruid.Point]bool),
+	}
 
 	//m.Grid.Fill(Floor)
 	//m.Box(0, size.X, 0, size.Y, Wall)
 	//m.Box(1, size.X - 1, 1, size.Y - 1, Floor)
 	//m.Box(30, 33, 11, 14, Wall)
 
-	m.Rand = rand.New(rand.NewPCG(uint64(time.Now().UnixNano()), uint64(time.Now().UnixNano())))
 	m.Generate()
-
 	return m
 }
 
