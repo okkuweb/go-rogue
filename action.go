@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"codeberg.org/anaseto/gruid"
 	"codeberg.org/anaseto/gruid/paths"
 )
@@ -14,16 +16,16 @@ type action struct {
 type actionType int
 
 const (
-	NoAction       actionType = iota
-	ActionMovement            // movement request
-	ActionQuit                // quit the game
+	NoAction   actionType = iota
+	ActionBump            // movement request
+	ActionQuit            // quit the game
 )
 
 func (m *model) handleAction() gruid.Effect {
 	switch m.action.Type {
-	case ActionMovement:
+	case ActionBump:
 		np := m.game.ECS.Positions[m.game.ECS.PlayerID].Add(m.action.Delta)
-		m.game.MovePlayer(np)
+		m.game.Bump(np)
 	case ActionQuit:
 		// for now, just terminate with gruid End command: this will
 		// have to be updated later when implementing saving.
@@ -32,8 +34,14 @@ func (m *model) handleAction() gruid.Effect {
 	return nil
 }
 
-func (g *game) MovePlayer(to gruid.Point) {
+func (g *game) Bump(to gruid.Point) {
 	if !g.Map.Walkable(to) {
+		return
+	}
+	if m := g.ECS.MonsterAt(to); m != nil {
+		// We show a message to standard error. Later in the tutorial,
+		// we'll put a message in the UI instead.
+		fmt.Printf("You kick the %s, much to its annoyance!\n", m.Name)
 		return
 	}
 	// We move the player to the new destination.

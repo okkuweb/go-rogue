@@ -8,12 +8,6 @@ type model struct {
 	action action     // UI action
 }
 
-type game struct {
-	PlayerPos gruid.Point // tracks player position
-	ECS       *ECS        // entities present on the map
-	Map       *Map        // the game map, made of tiles
-}
-
 func (m *model) Update(msg gruid.Msg) gruid.Effect {
 	m.action = action{} // reset last action information
 	switch msg := msg.(type) {
@@ -26,6 +20,7 @@ func (m *model) Update(msg gruid.Msg) gruid.Effect {
 		m.game.ECS = NewECS()
 		m.game.ECS.PlayerID = m.game.ECS.AddEntity(NewPlayer(), m.game.Map.RandomFloor())
 		m.game.UpdateFOV()
+		m.game.SpawnMonsters()
 	case gruid.MsgKeyDown:
 		// Update action information on key down.
 		m.updateMsgKeyDown(msg)
@@ -36,6 +31,8 @@ func (m *model) Update(msg gruid.Msg) gruid.Effect {
 
 const (
 	ColorFOV gruid.Color = iota + 1
+	ColorPlayer
+	ColorMonster
 )
 
 func (m *model) updateMsgKeyDown(msg gruid.MsgKeyDown) {
@@ -43,22 +40,22 @@ func (m *model) updateMsgKeyDown(msg gruid.MsgKeyDown) {
 	switch msg.Key {
 
 	case "h":
-		m.action = action{Type: ActionMovement, Delta: pdelta.Shift(-1, 0)}
+		m.action = action{Type: ActionBump, Delta: pdelta.Shift(-1, 0)}
 	case "j":
-		m.action = action{Type: ActionMovement, Delta: pdelta.Shift(0, 1)}
+		m.action = action{Type: ActionBump, Delta: pdelta.Shift(0, 1)}
 	case "k":
-		m.action = action{Type: ActionMovement, Delta: pdelta.Shift(0, -1)}
+		m.action = action{Type: ActionBump, Delta: pdelta.Shift(0, -1)}
 	case "l":
-		m.action = action{Type: ActionMovement, Delta: pdelta.Shift(1, 0)}
+		m.action = action{Type: ActionBump, Delta: pdelta.Shift(1, 0)}
 
 	case "y":
-		m.action = action{Type: ActionMovement, Delta: pdelta.Shift(-1, -1)}
+		m.action = action{Type: ActionBump, Delta: pdelta.Shift(-1, -1)}
 	case "u":
-		m.action = action{Type: ActionMovement, Delta: pdelta.Shift(1, -1)}
+		m.action = action{Type: ActionBump, Delta: pdelta.Shift(1, -1)}
 	case "b":
-		m.action = action{Type: ActionMovement, Delta: pdelta.Shift(-1, 1)}
+		m.action = action{Type: ActionBump, Delta: pdelta.Shift(-1, 1)}
 	case "n":
-		m.action = action{Type: ActionMovement, Delta: pdelta.Shift(1, 1)}
+		m.action = action{Type: ActionBump, Delta: pdelta.Shift(1, 1)}
 
 	case gruid.KeyEscape, "Q":
 		m.action = action{Type: ActionQuit}

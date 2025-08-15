@@ -36,6 +36,25 @@ func (es *ECS) Player() *Player {
 	return es.Entities[es.PlayerID].(*Player)
 }
 
+func (es *ECS) MonsterAt(p gruid.Point) *Monster {
+	for i, q := range es.Positions {
+		if p != q {
+			continue
+		}
+		e := es.Entities[i]
+		switch e := e.(type) {
+		case *Monster:
+			return e
+		}
+	}
+	return nil
+}
+
+
+func (es *ECS) NoBlockingEntityAt(p gruid.Point) bool {
+	return es.Positions[es.PlayerID] != p && es.MonsterAt(p) == nil
+}
+
 type Entity interface {
 	Rune() rune         // the character representing the entity
 	Color() gruid.Color // the character's color
@@ -58,5 +77,18 @@ func (p *Player) Rune() rune {
 }
 
 func (p *Player) Color() gruid.Color {
-	return gruid.ColorDefault
+	return ColorPlayer
+}
+
+type Monster struct {
+	Name string
+	Char rune
+}
+
+func (m *Monster) Rune() rune {
+	return m.Char
+}
+
+func (m *Monster) Color() gruid.Color {
+	return ColorMonster
 }
