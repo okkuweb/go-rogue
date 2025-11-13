@@ -8,6 +8,8 @@ import (
 	"codeberg.org/anaseto/gruid/rl"
 )
 
+// TODO: I don't understand almost anything about this file
+
 // These constants represent the different kind of map tiles.
 const (
 	Wall rl.Cell = iota

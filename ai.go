@@ -7,6 +7,8 @@ import (
 	"codeberg.org/anaseto/gruid/paths"
 )
 
+// TODO: I don't understand almost anything about this file
+
 // HandleMonsterTurn handles a monster's turn. The function assumes the entity
 // with the given index is indeed a monster initialized with fighter and AI
 // components.

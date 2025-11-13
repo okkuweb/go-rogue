@@ -5,6 +5,8 @@ import (
 	"codeberg.org/anaseto/gruid/rl"
 )
 
+// TODO: I don't understand almost anything about this file
+
 type ECS struct {
 	Entities  []Entity            // list of entities
 	Positions map[int]gruid.Point // entity index: map position

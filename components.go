@@ -4,6 +4,8 @@ package main
 
 import "codeberg.org/anaseto/gruid"
 
+// TODO: I don't understand almost anything about this file
+
 // fighter holds data relevant to fighting. We'll use simple attack/defense
 // stats.
 type fighter struct {

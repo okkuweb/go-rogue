@@ -6,6 +6,8 @@ import (
 	"codeberg.org/anaseto/gruid"
 )
 
+// TODO: I don't understand almost anything about this file
+
 // action represents information relevant to the last UI action performed.
 type action struct {
 	Type  actionType  // kind of action (movement, quitting, ...)

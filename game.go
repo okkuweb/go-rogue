@@ -9,6 +9,8 @@ import (
 	"codeberg.org/anaseto/gruid/paths"
 )
 
+// TODO: I don't understand almost anything about this file
+
 // game represents information relevant the current game's state.
 type game struct {
 	ECS *ECS             // entities present on the map

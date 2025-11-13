@@ -19,6 +19,7 @@ func (sty styler) GetStyle(cst gruid.Style) tc.Style {
 func main() {
 	InitLogger()
 	defer logFile.Close()
+	// TODO: Move this grid stuff to a grid file
 	opt := &options{width: 80, height: 24}
 	gd := gruid.NewGrid(opt.width, opt.height)
 	md := &model{grid: gd}
