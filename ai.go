@@ -21,7 +21,7 @@ func (g *game) HandleMonsterTurn(i int) {
 	ai := g.ECS.AI[i]
 	aip := &aiPath{g: g}
 	pp := g.ECS.Positions[g.ECS.PlayerID]
-	if paths.DistanceManhattan(p, pp) == 1 {
+	if paths.DistanceChebyshev(p, pp) == 1 {
 		// If the monster is adjacent to the player, attack.
 		g.BumpAttack(i, g.ECS.PlayerID)
 		return
@@ -64,10 +64,10 @@ type aiPath struct {
 	nb paths.Neighbors
 }
 
-// Neighbors returns the list of walkable neighbors of q in the map using 4-way
+// Neighbors returns the list of walkable neighbors of q in the map using 8-way
 // movement along cardinal directions.
 func (aip *aiPath) Neighbors(q gruid.Point) []gruid.Point {
-	return aip.nb.Cardinal(q,
+	return aip.nb.All(q,
 	func(r gruid.Point) bool {
 		return aip.g.Map.Walkable(r)
 	})
@@ -87,6 +87,6 @@ func (aip *aiPath) Cost(p, q gruid.Point) int {
 // Estimation implements paths.Astar.Estimation. For 4-way movement, we use the
 // Manhattan distance.
 func (aip *aiPath) Estimation(p, q gruid.Point) int {
-	return paths.DistanceManhattan(p, q)
+	return paths.DistanceChebyshev(p, q)
 }
 

@@ -57,7 +57,7 @@ func (m *Map) Walkable(p gruid.Point) bool {
 func (m *Map) Rune(c rl.Cell) (r rune) {
 	switch c {
 	case Wall:
-		r = '#'
+		r = '█'
 	case Floor:
 		r = '.'
 	}

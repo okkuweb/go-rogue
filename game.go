@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"strings"
 
 	"codeberg.org/anaseto/gruid"
@@ -21,7 +20,7 @@ type game struct {
 // SpawnMonsters adds some monsters in the current map.
 func (g *game) SpawnMonsters() {
 	const numberOfMonsters = 6
-	for i := 0; i < numberOfMonsters; i++ {
+	for range numberOfMonsters {
 		m := &Monster{}
 		// We generate either an orc or a troll with 0.8 and 0.2
 		// probabilities respectively.
@@ -90,7 +89,7 @@ func (g *game) UpdateFOV() {
 		return g.Map.Grid.At(p) != Wall
 	}
 	for _, p := range player.FOV.SSCVisionMap(pp, maxLOS, passable, false) {
-		if paths.DistanceManhattan(p, pp) > maxLOS {
+		if paths.DistanceChebyshev(p, pp) > maxLOS {
 			continue
 		}
 		if !g.Map.Explored[p] {
@@ -106,7 +105,7 @@ func (g *game) UpdateFOV() {
 func (g *game) InFOV(p gruid.Point) bool {
 	pp := g.ECS.Positions[g.ECS.PlayerID]
 	return g.ECS.Player().FOV.Visible(p) &&
-		paths.DistanceManhattan(pp, p) <= maxLOS
+		paths.DistanceChebyshev(pp, p) <= maxLOS
 }
 
 // BumpAttack implements attack of a fighter entity on another.
@@ -114,11 +113,12 @@ func (g *game) BumpAttack(i, j int) {
 	fi := g.ECS.Fighter[i]
 	fj := g.ECS.Fighter[j]
 	damage := fi.Power - fj.Defense
+	// TODO: Fix this deprecation warning
 	attackDesc := fmt.Sprintf("%s attacks %s", strings.Title(g.ECS.Name[i]), g.ECS.Name[j])
 	if damage > 0 {
-		log.Printf("%s for %d damage", attackDesc, damage)
+		Log(fmt.Sprintf("%s for %d damage", attackDesc, damage))
 		fj.HP -= damage
 	} else {
-		log.Printf("%s but does no damage", attackDesc)
+		Log(fmt.Sprintf("%s but does no damage", attackDesc))
 	}
 }
