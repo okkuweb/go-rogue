@@ -6,5 +6,5 @@
 - Read the docs
 - Make the enemies pathfind the player only if they see the player
 - Change the dungeon layout into the rogue box layout
-- Sometimes the pathfinding is a bit jank. The enemies walk away kinda randomly from time to time. I wonder if it's intentional.
+- Sometimes the pathfinding is a bit jank. The enemies walk away kinda randomly from time to time. I wonder if it's intentional. They just copy my movement for some reason.
 
