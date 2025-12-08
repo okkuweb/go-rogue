@@ -39,12 +39,6 @@ func (m *model) Update(msg gruid.Msg) gruid.Effect {
 	return m.handleAction()
 }
 
-const (
-	ColorFOV gruid.Color = iota + 1
-	ColorPlayer
-	ColorMonster
-)
-
 func (m *model) updateMsgKeyDown(msg gruid.MsgKeyDown) {
 	pdelta := gruid.Point{}
 	switch msg.Key {
@@ -104,7 +98,7 @@ func (m *model) Draw() gruid.Grid {
 			continue
 		}
 		c := m.grid.At(p)
-		c.Rune, c.Style.Fg = g.ECS.Style(i)
+		c.Rune, c.Style.Fg = g.ECS.Style(i) // TODO: Gotta map this style to an actual color somehow
 		m.grid.Set(p, c)
 	}
 	return m.grid
