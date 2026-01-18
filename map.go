@@ -6,6 +6,7 @@ import (
 	"codeberg.org/anaseto/gruid"
 	"codeberg.org/anaseto/gruid/paths"
 	"codeberg.org/anaseto/gruid/rl"
+	"github.com/solarlune/dngn"
 )
 
 // TODO: I don't understand almost anything about this file
@@ -81,35 +82,49 @@ func (w walker) Neighbor(p gruid.Point) gruid.Point {
 	}
 }
 
+var GameMap *dngn.Layout
+
 // Generate fills the Grid attribute of m with a procedurally generated map.
 func (m *Map) Generate() {
 	// map generator using the rl package from gruid
 	// cellular automata map generation with rules that give a cave-like map.
-	for {
-		sz := m.Grid.Size()
-		w := ((37 + rand.IntN(6)) * sz.X) / MapWidth
-		size := sz.Y * w
-		mgen := rl.MapGen{
-			Rand: m.Rand,
-			Grid: m.Grid,
+	layout := dngn.NewLayout(MapWidth, MapHeight)
+	layout.GenerateRandomRooms(m.Rune(Floor), m.Rune(Wall), 10, 6, 3, 10, 5, true)
+	for y := 0; y < MapHeight; y++ {
+		for x := 0; x < MapWidth; x++ {
+			p := gruid.Point{X: x, Y: y}
+			if layout.Get(x, y) == m.Rune(Wall) {
+				m.Grid.Set(p, Wall)
+			} else {
+				m.Grid.Set(p, Floor)
+			}
 		}
-		wlk := walker{rand: m.Rand}
-		walks := ((7 + m.Rand.IntN(3)) * sz.X) / MapWidth
-		mgen.RandomWalkCave(wlk, rl.Cell(Floor), float64(size)/float64(sz.X*sz.Y), walks)
-		freep := m.RandomFloor()
-		// We put walls in floor cells non reachable from freep, to ensure that
-		// all the cells are connected (which is not guaranteed by cellular
-		// automata map generation).
-		pr := paths.NewPathRange(m.Grid.Range())
-		pr.CCMap(&path{m: m}, freep)
-		ntiles := mgen.KeepCC(pr, freep, Wall)
-		const minCaveSize = 400
-		if ntiles > minCaveSize {
-			break
-		}
-		// If there were not enough free tiles, we run the map
-		// generation again.
 	}
+	//for {
+	//	sz := m.Grid.Size()
+	//	w := ((37 + rand.IntN(6)) * sz.X) / MapWidth
+	//	size := sz.Y * w
+	//	mgen := rl.MapGen{
+	//		Rand: m.Rand,
+	//		Grid: m.Grid,
+	//	}
+	//	wlk := walker{rand: m.Rand}
+	//	walks := ((7 + m.Rand.IntN(3)) * sz.X) / MapWidth
+	//	mgen.RandomWalkCave(wlk, rl.Cell(Floor), float64(size)/float64(sz.X*sz.Y), walks)
+	//	freep := m.RandomFloor()
+	//	// We put walls in floor cells non reachable from freep, to ensure that
+	//	// all the cells are connected (which is not guaranteed by cellular
+	//	// automata map generation).
+	//	pr := paths.NewPathRange(m.Grid.Range())
+	//	pr.CCMap(&path{m: m}, freep)
+	//	ntiles := mgen.KeepCC(pr, freep, Wall)
+	//	const minCaveSize = 400
+	//	if ntiles > minCaveSize {
+	//		break
+	//	}
+	//	// If there were not enough free tiles, we run the map
+	//	// generation again.
+	//}
 }
 
 // RandomFloor returns a random floor cell in the map. It assumes that such a
