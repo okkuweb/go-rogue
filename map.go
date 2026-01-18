@@ -64,18 +64,38 @@ func (m *Map) Rune(c rl.Cell) (r rune) {
 	return r
 }
 
+type walker struct {
+	rand *rand.Rand
+}
+
+func (w walker) Neighbor(p gruid.Point) gruid.Point {
+	switch w.rand.IntN(6) {
+	case 0, 1:
+		return p.Shift(1, 0)
+	case 2, 3:
+		return p.Shift(-1, 0)
+	case 4:
+		return p.Shift(0, 1)
+	default:
+		return p.Shift(0, -1)
+	}
+}
+
 // Generate fills the Grid attribute of m with a procedurally generated map.
 func (m *Map) Generate() {
 	// map generator using the rl package from gruid
-	mgen := rl.MapGen{Rand: m.Rand, Grid: m.Grid}
-	// cellular automata map generation with rules that give a cave-like
-	// map.
-	rules := []rl.CellularAutomataRule{
-		{WCutoff1: 5, WCutoff2: 2, Reps: 4, WallsOutOfRange: true},
-		{WCutoff1: 5, WCutoff2: 25, Reps: 3, WallsOutOfRange: true},
-	}
+	// cellular automata map generation with rules that give a cave-like map.
 	for {
-		mgen.CellularAutomataCave(Wall, Floor, 0.42, rules)
+		sz := m.Grid.Size()
+		w := ((37 + rand.IntN(6)) * sz.X) / MapWidth
+		size := sz.Y * w
+		mgen := rl.MapGen{
+			Rand: m.Rand,
+			Grid: m.Grid,
+		}
+		wlk := walker{rand: m.Rand}
+		walks := ((7 + m.Rand.IntN(3)) * sz.X) / MapWidth
+		mgen.RandomWalkCave(wlk, rl.Cell(Floor), float64(size)/float64(sz.X*sz.Y), walks)
 		freep := m.RandomFloor()
 		// We put walls in floor cells non reachable from freep, to ensure that
 		// all the cells are connected (which is not guaranteed by cellular

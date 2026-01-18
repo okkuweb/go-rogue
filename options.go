@@ -7,3 +7,8 @@ type options struct {
 	height int
 }
 
+const (
+	MapWidth  = 80
+	MapHeight = 24
+)
+
