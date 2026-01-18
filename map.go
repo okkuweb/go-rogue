@@ -90,8 +90,10 @@ func (m *Map) Generate() {
 	// cellular automata map generation with rules that give a cave-like map.
 	layout := dngn.NewLayout(MapWidth, MapHeight)
 	layout.GenerateRandomRooms(m.Rune(Floor), m.Rune(Wall), 10, 6, 3, 10, 5, true)
-	for y := 0; y < MapHeight; y++ {
-		for x := 0; x < MapWidth; x++ {
+	mapSelection := layout.Select()
+	mapSelection.Remove(mapSelection.FilterByArea(1, 1, layout.Width-2, layout.Height-2)).Fill(m.Rune(Wall))
+	for y := range MapHeight {
+		for x := range MapWidth {
 			p := gruid.Point{X: x, Y: y}
 			if layout.Get(x, y) == m.Rune(Wall) {
 				m.Grid.Set(p, Wall)
