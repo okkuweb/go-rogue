@@ -6,6 +6,7 @@ require (
 	codeberg.org/anaseto/gruid v0.24.0
 	codeberg.org/anaseto/gruid-tcell v0.4.0
 	github.com/gdamore/tcell/v2 v2.8.1
+	github.com/solarlune/dngn v0.0.0-20240724224203-f9f4d976f3cc
 )
 
 require (
@@ -13,7 +14,6 @@ require (
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/mattn/go-runewidth v0.0.16 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
-	github.com/solarlune/dngn v0.0.0-20240724224203-f9f4d976f3cc // indirect
 	golang.org/x/sys v0.34.0 // indirect
 	golang.org/x/term v0.33.0 // indirect
 	golang.org/x/text v0.27.0 // indirect
