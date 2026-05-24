@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 )
@@ -22,4 +23,22 @@ func Log(args ...any) {
 		return
 	}
 	logger.Println(args...)
+}
+
+func DebugLog(args ...any) {
+	if logger == nil {
+		log.Println("Logger not initialized!")
+		return
+	}
+	logger.Println(args...)
+}
+
+func GameLog(args ...any) {
+	if logger == nil {
+		log.Println("Logger not initialized!")
+		return
+	}
+	args = append([]any{"GAME: "}, args...)
+	logger.Println(args...)
+	// TODO: Game message log print function here
 }

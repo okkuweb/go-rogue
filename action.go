@@ -1,12 +1,8 @@
 package main
 
 import (
-	"fmt"
-
 	"codeberg.org/anaseto/gruid"
 )
-
-// TODO: I don't understand almost anything about this file
 
 // action represents information relevant to the last UI action performed.
 type action struct {
@@ -36,7 +32,7 @@ func (m *model) handleAction() gruid.Effect {
 		return gruid.End()
 	}
 	if m.game.ECS.PlayerDied() {
-		fmt.Print("You died")
+		GameLog("You died")
 		return gruid.End()
 	}
 	return nil
