@@ -84,9 +84,7 @@ func (aip *aiPath) Cost(p, q gruid.Point) int {
 	return 1
 }
 
-// Estimation implements paths.Astar.Estimation. For 4-way movement, we use the
-// Manhattan distance.
 func (aip *aiPath) Estimation(p, q gruid.Point) int {
-	return paths.DistanceChebyshev(p, q)
+	return paths.DistanceManhattan(p, q)
 }
 

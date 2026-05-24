@@ -89,7 +89,8 @@ func (m *Map) Generate() {
 	// map generator using the rl package from gruid
 	// cellular automata map generation with rules that give a cave-like map.
 	layout := dngn.NewLayout(MapWidth, MapHeight)
-	layout.GenerateRandomRooms(m.Rune(Floor), m.Rune(Wall), 10, 6, 3, 10, 5, true)
+	roomPositions := layout.GenerateRandomRooms(m.Rune(Floor), m.Rune(Wall), 10, 6, 3, 10, 5, false)
+	connectRoomsCardinal(layout, roomPositions, m.Rune(Floor))
 	mapSelection := layout.Select()
 	mapSelection.Remove(mapSelection.FilterByArea(1, 1, layout.Width-2, layout.Height-2)).Fill(m.Rune(Wall))
 	for y := range MapHeight {
@@ -127,6 +128,36 @@ func (m *Map) Generate() {
 	//	// If there were not enough free tiles, we run the map
 	//	// generation again.
 	//}
+}
+
+func connectRoomsCardinal(layout *dngn.Layout, roomPositions [][]int, floor rune) {
+	for i := 0; i < len(roomPositions)-1; i++ {
+		start := roomPositions[i]
+		end := roomPositions[i+1]
+
+		x, y := start[0], start[1]
+		endX, endY := end[0], end[1]
+
+		for x != endX {
+			layout.Set(x, y, floor)
+			if x < endX {
+				x++
+			} else {
+				x--
+			}
+		}
+
+		for y != endY {
+			layout.Set(x, y, floor)
+			if y < endY {
+				y++
+			} else {
+				y--
+			}
+		}
+
+		layout.Set(endX, endY, floor)
+	}
 }
 
 // RandomFloor returns a random floor cell in the map. It assumes that such a
